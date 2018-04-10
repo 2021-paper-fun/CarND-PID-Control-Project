@@ -3,6 +3,25 @@ Self-Driving Car Engineer Nanodegree Program
 
 ---
 
+## PID controller
+The **P**(proportional) **I**(integral) D(differential) controller is a procedure for applying
+continuous correction to steering, so that the cross track error (CTE) is kept low.
+However, it should be noted that PID controllers are used in a wide variety of applications, not just
+for steering an autonomous car.
+Still, I am going to continue with the writeup by focusing on the steering angle.
+
+The steering angle is controlled by the following equation:
+$$
+\texttt{Angle}_t = - K_P\cdot \texttt{Error}_t - K_I\int_{0}^t \texttt{Error}_{t'} dt' - K_D\cdot \frac{d \texttt{Error}_t}{d t},
+$$
+where $K_P$, $K_I$, and $K_D$ are coefficients that need to be selected so that the mean $\texttt{Error}$ is low.
+
+To find the $K_P$, $K_I$, $K_D$ coefficients, I loosely followed the twiddle procedure from the lectures. I started at (0.005, 0, 0.1) and iteratively increased $K_P$ by 0.005, kept $K_I$ at zero, and increased $K_D$ by 0.1. This way I reached the point (0.045, 0, 1.2), and then I tweaked the first parameter with a finer-grained step of 0.001, the second with a step of 0.00001, and the third with a step of 0.05.
+
+My final parameters were: (0.047, 0.00005, 1.2) at which point the car is a bit wobbly, but it stays in the track.
+
+I've also experimented with a PID controller on the speed, but the process of finding the right coefficients was far too time consuming. Also, the car often sterted reversing, and I felt that this would require hand-holding the model, i.e. adding `if`-s ensuring that the speed is above a certain threshold.
+
 ## Dependencies
 
 * cmake >= 3.5
