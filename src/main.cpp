@@ -32,6 +32,10 @@ int main(int argc, char* argv[])
 {
   uWS::Hub h;
 
+  /* My final coefficients were: 0.047 0.00005 1.2
+   * so the `pid` executable should be called like this:
+   *    ./pid 0.047 0.00005 1.2
+   */
   double init_Kp_steer = atof(argv[1]);
   double init_Ki_steer = atof(argv[2]);
   double init_Kd_steer = atof(argv[3]);
@@ -65,7 +69,15 @@ int main(int argc, char* argv[])
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
+
+          // NOTE: I also tried a separate controller for speed
+          // but that made the process of finding the right coefficients
+          // tedious; also, I would have needed an `if` to make the speed
+          // at bay (not too small, not too big), regardless of what speed
+          // was returned by the speed PID controller -- and I didn't find
+          // such solution "clean"
           msgJson["throttle"] = 0.3;
+
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
